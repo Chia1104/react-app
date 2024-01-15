@@ -17,4 +17,10 @@ export const Route = rootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   component: Root,
+  errorComponent: ({ error }) => {
+    if (error instanceof Response) {
+      return <p>{error.statusText}</p>;
+    }
+    return <p>Ooops!</p>;
+  },
 });

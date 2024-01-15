@@ -1,4 +1,4 @@
-import { FileRoute, Link } from "@tanstack/react-router";
+import { FileRoute, Link, redirect } from "@tanstack/react-router";
 import { useBears } from "@/stores/bears.store";
 
 type Pokemon = {
@@ -36,7 +36,13 @@ const Index = () => {
 
 export const Route = new FileRoute('/').createRoute({
   component: Index,
-  errorComponent: () => <p>Ooops</p>,
+  onError: ({ error }) => console.error(error),
+  errorComponent: ({ error }) => {
+    if (error instanceof Response) {
+      return <p>{error.statusText}</p>;
+    }
+    return <p>Ooops!</p>;
+  },
   loader: async ({ context }) => {
     try {
       return await context.queryClient.ensureQueryData({
@@ -64,6 +70,34 @@ export const Route = new FileRoute('/').createRoute({
           } satisfies Pokemon;
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      throw new Response("Bad Request", {
+        status: 400,
+        statusText: "Bad Request",
+      });
+    }
+  },
+  beforeLoad: async ({ location, context }) => {
+    const me = await context.queryClient.ensureQueryData({
+      queryKey: ["me"],
+      queryFn: () => {
+        return {
+          name: "Bob",
+          email: "bob@example.com",
+        };
+      },
+    });
+    if (!me) {
+      throw redirect({
+        to: "/auth/login",
+        search: {
+          // Use the current location to power a redirect after login
+          // (Do not use `router.state.resolvedLocation` as it can
+          // potentially lag behind the actual current location)
+          redirect: location.href,
+        },
+      });
+    }
+    return null;
   },
 });
