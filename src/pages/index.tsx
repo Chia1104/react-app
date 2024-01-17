@@ -31,12 +31,6 @@ const Index = () => {
 export const Route = new FileRoute('/').createRoute({
   component: Index,
   onError: ({ error }) => console.error(error),
-  errorComponent: ({ error }) => {
-    if (error instanceof Response) {
-      return <p>{error.statusText}</p>;
-    }
-    return <p>Ooops!</p>;
-  },
   loader: async ({ context }) => {
     try {
       return await context.queryClient.ensureQueryData({
