@@ -28,7 +28,7 @@ const Index = () => {
   );
 };
 
-export const Route = new FileRoute('/').createRoute({
+export const Route = new FileRoute("/").createRoute({
   component: Index,
   onError: ({ error }) => console.error(error),
   loader: async ({ context }) => {
