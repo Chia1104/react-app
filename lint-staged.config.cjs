@@ -10,7 +10,7 @@ module.exports = {
       .map((filename) => `"${isWin ? filename : escape([filename])}"`)
       .join(" ");
     return [
-      `prettier --write ${escapedFileNames}`,
+      `prettier --no-error-on-unmatched-pattern --write ${escapedFileNames}`,
       `eslint --fix ${filenames
         .filter((file) => !eslint.isPathIgnored(file))
         .map((f) => `"${f}"`)
@@ -22,5 +22,5 @@ module.exports = {
 
 function escape(str) {
   const escaped = quote(str);
-  return escaped.replace(/\\@/g, "@");
+  return escaped.replace(/\\@/g, "@").replace(/\\$/g, "$");
 }

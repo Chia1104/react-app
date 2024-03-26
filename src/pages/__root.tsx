@@ -1,6 +1,6 @@
 import {
   Outlet,
-  rootRouteWithContext,
+  createRootRouteWithContext,
   lazyRouteComponent,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
@@ -17,7 +17,7 @@ const Root = () => {
   );
 };
 
-export const Route = rootRouteWithContext<{
+export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   component: Root,

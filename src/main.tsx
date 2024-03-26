@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import { RouterProvider, Router } from "@tanstack/react-router";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import {
   QueryClientContext,
@@ -7,8 +7,7 @@ import {
 } from "./context/query-client.context";
 import "./index.css";
 
-// Set up a Router instance
-const router = new Router({
+const router = createRouter({
   routeTree,
   context: {
     queryClient,

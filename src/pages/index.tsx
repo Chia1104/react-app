@@ -1,4 +1,4 @@
-import { FileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useBears, IncreasePopulationButton } from "@/stores/bears.store";
 
 type Pokemon = {
@@ -28,43 +28,34 @@ const Index = () => {
   );
 };
 
-export const Route = new FileRoute("/").createRoute({
+export const Route = createFileRoute("/")({
   component: Index,
-  onError: ({ error }) => console.error(error),
-  loader: async ({ context }) => {
-    try {
-      return await context.queryClient.ensureQueryData({
-        queryKey: ["pokemon"],
-        queryFn: () => {
-          return {
-            abilities: [
-              {
-                ability: {
-                  name: "limber",
-                  url: "https://pokeapi.co/api/v2/ability/7/",
-                },
-                is_hidden: false,
-                slot: 1,
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData({
+      queryKey: ["pokemon"],
+      queryFn: () => {
+        return {
+          abilities: [
+            {
+              ability: {
+                name: "limber",
+                url: "https://pokeapi.co/api/v2/ability/7/",
               },
-              {
-                ability: {
-                  name: "imposter",
-                  url: "https://pokeapi.co/api/v2/ability/150/",
-                },
-                is_hidden: true,
-                slot: 3,
+              is_hidden: false,
+              slot: 1,
+            },
+            {
+              ability: {
+                name: "imposter",
+                url: "https://pokeapi.co/api/v2/ability/150/",
               },
-            ],
-          } satisfies Pokemon;
-        },
-      });
-    } catch (error) {
-      throw new Response("Bad Request", {
-        status: 400,
-        statusText: "Bad Request",
-      });
-    }
-  },
+              is_hidden: true,
+              slot: 3,
+            },
+          ],
+        } satisfies Pokemon;
+      },
+    }),
   beforeLoad: async ({ location, context }) => {
     const me = await context.queryClient.ensureQueryData({
       queryKey: ["me"],
@@ -79,9 +70,6 @@ export const Route = new FileRoute("/").createRoute({
       throw redirect({
         to: "/auth/login",
         search: {
-          // Use the current location to power a redirect after login
-          // (Do not use `router.state.resolvedLocation` as it can
-          // potentially lag behind the actual current location)
           redirect: location.href,
         },
       });

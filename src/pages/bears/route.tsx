@@ -1,5 +1,5 @@
-import { FileRoute, lazyRouteComponent, lazyFn } from "@tanstack/react-router";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
-export const Route = new FileRoute("/bears").createRoute({
+export const Route = createFileRoute("/bears")({
   component: lazyRouteComponent(() => import("./~page")),
 });
